@@ -12,15 +12,21 @@ class AudioEmotionModel:
     def __init__(self):
         # Wav2Vec2 Speech Emotion Recognition Model
         self.model_name = "ehcalabres/wav2vec2-lg-xlsr-en-speech-emotion-recognition"
-        self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.model_name)
-        self.model = AutoModelForAudioClassification.from_pretrained(self.model_name)
-        self.model.eval()
+        self.feature_extractor = None
+        self.model = None
         self.ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+
+    def _ensure_loaded(self):
+        if self.model is None or self.feature_extractor is None:
+            self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.model_name)
+            self.model = AutoModelForAudioClassification.from_pretrained(self.model_name)
+            self.model.eval()
 
     def predict(self, audio_path):
         temp_in = None
         wav_path = None
         try:
+            self._ensure_loaded()
             # 1. Resolve input: handle either raw bytes or existing filepath
             if isinstance(audio_path, bytes):
                 with tempfile.NamedTemporaryFile(suffix=".input", delete=False) as f:
