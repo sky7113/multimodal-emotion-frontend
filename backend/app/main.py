@@ -144,7 +144,28 @@ async def analyze_multimodal_emotion(
             predictions["audio"] = _generate_mock_prediction("audio")
         else:
             try:
-                predictions["audio"] = audio_model.predict(audio_bytes)
+                audio_res = audio_model.predict(audio_bytes)
+                if isinstance(audio_res, dict):
+                    canon_scores = {}
+                    for k, v in audio_res.items():
+                        k_clean = k.lower().strip()
+                        if k_clean == "fearful":
+                            k_clean = "fear"
+                        elif k_clean == "surprised":
+                            k_clean = "surprise"
+                        elif k_clean == "calm":
+                            k_clean = "neutral"
+                        canon_scores[k_clean] = round(float(v), 4)
+                    top_emo = max(canon_scores, key=canon_scores.get)
+                    predictions["audio"] = ModalityPrediction(
+                        modality="audio",
+                        top_emotion=top_emo,
+                        confidence=canon_scores[top_emo],
+                        scores=canon_scores,
+                        supported_classes=list(canon_scores.keys()),
+                    )
+                else:
+                    predictions["audio"] = audio_res
             except Exception as e:
                 logger.error(f"Audio inference error: {e}")
                 raise HTTPException(

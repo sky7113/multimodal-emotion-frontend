@@ -41,9 +41,12 @@ MODALITY_SUPPORTED_CLASSES: Dict[str, List[str]] = {
     ],
     "audio": [
         "angry",
+        "disgust",
+        "fear",
         "happy",
         "neutral",
         "sad",
+        "surprise",
     ],
 }
 

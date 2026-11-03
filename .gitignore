@@ -8,3 +8,9 @@ __pycache__/
 *.pyc
 .env
 .env.local
+wav2vec2_checkpoints/
+backend/wav2vec2_checkpoints/
+*.bin
+*.safetensors
+*.pt
+*.pth
