@@ -56,7 +56,7 @@ export default function DashboardPage() {
       console.error("Analysis request error:", err);
       setErrorMessage(
         err.message ||
-          "Failed to connect to the backend at http://127.0.0.1:8000. Is FastAPI running?"
+          "Failed to connect to the backend API. Please ensure the backend server is running and accessible."
       );
     } finally {
       setIsLoading(false);
